@@ -55,7 +55,7 @@ export default function Home() {
       const inputElement = document.getElementById('urlInput') as HTMLInputElement;
       inputElement.value = ''; // Clear the URL
       inputElement.blur();
-    }, 2000);
+    }, 4000);
 
     setTimer(newTimer);
   };
@@ -82,7 +82,7 @@ export default function Home() {
       <div
         style={{
           position: "absolute",
-          top: "20px",
+          top: "10px",
           width: "100%",
           display: "flex",
           justifyContent: "center",
