@@ -233,8 +233,7 @@ export default function Home() {
           </div>
         </>
       ) : (
-        <div>
-          Loading...</div>
+        <div>Loading...</div>
       )}
     </main>
   );
