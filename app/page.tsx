@@ -32,6 +32,7 @@ export default function Home() {
       setUserData(WebApp.initDataUnsafe.user as UserData)
     }
 
+    // Retrieve validUsers list from localStorage on initial load
     const storedUsers = localStorage.getItem('validUsers');
     if (storedUsers) {
       setValidUsers(JSON.parse(storedUsers));
@@ -39,15 +40,17 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    // Store the updated validUsers list in localStorage whenever it changes
     localStorage.setItem('validUsers', JSON.stringify(validUsers));
   }, [validUsers]);
 
+  // Check if the user's access has expired
   const isAccessExpired = (addedAt: number) => {
-    const currentTime = Date.now();
     const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
-    return currentTime - addedAt > threeDaysInMs;
+    return Date.now() - addedAt > threeDaysInMs;
   };
 
+  // Determine if the current user has access
   const hasAccess = () => {
     return (
       userData &&
@@ -57,6 +60,14 @@ export default function Home() {
     );
   };
 
+  // Extract the ID from the given URL
+  const extractIdFromUrl = (url: string) => {
+    const regex = /\/s\/1([^/]+)/;
+    const match = url.match(regex);
+    return match ? match[1] : null;
+  };
+
+  // Handle input changes for URL embedding
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const url = event.target.value;
     const id = extractIdFromUrl(url);
@@ -65,11 +76,11 @@ export default function Home() {
       const iframe = document.getElementById('myIframe') as HTMLIFrameElement;
       const embedUrl = `https://www.terabox.com/sharing/embed?surl=${id}`;
       iframe.src = embedUrl;
-
       resetFadeOut();
     }
   };
 
+  // Reset input bar after a delay
   const resetFadeOut = () => {
     if (timer) {
       clearTimeout(timer);
@@ -77,7 +88,7 @@ export default function Home() {
     const newTimer = setTimeout(() => {
       setIsInputVisible(false);
       const inputElement = document.getElementById('urlInput') as HTMLInputElement;
-      inputElement.value = '';
+      inputElement.value = ''; // Clear the URL
       inputElement.blur();
     }, 2000);
 
@@ -89,6 +100,7 @@ export default function Home() {
     resetFadeOut();
   };
 
+  // Function to add a new user ID with a timestamp
   const handleAddUserId = () => {
     const newId = parseInt(newUserId);
     if (!isNaN(newId) && !validUsers.some((user) => user.id === newId)) {
@@ -96,10 +108,11 @@ export default function Home() {
         ...prevUsers,
         { id: newId, addedAt: Date.now() },
       ]);
-      setNewUserId('');
+      setNewUserId(''); // Clear input field
     }
   };
 
+  // Function to remove a user ID
   const handleRemoveUserId = (id: number) => {
     setValidUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
   };
@@ -238,7 +251,7 @@ export default function Home() {
       ) : (
         <div
           style={{ color: 'red', cursor: 'pointer' }}
-          onClick={() => window.open('https://youtube.com')}
+          onClick={() => window.open('https://yourlink.com')}
         >
           This Bot is paid. Subscribe Now
         </div>
@@ -246,9 +259,3 @@ export default function Home() {
     </main>
   );
 }
-
-const extractIdFromUrl = (url: string) => {
-  const regex = /\/s\/1([^/]+)/;
-  const match = url.match(regex);
-  return match ? match[1] : null;
-};
