@@ -233,7 +233,13 @@ export default function Home() {
           </div>
         </>
       ) : (
-        <div>Loading...</div>
+        <div
+          style={{ color: 'red', cursor: 'pointer' }}
+          onClick={() => window.open('https://yourlink.com',)}
+        >
+          This Bot is paid. Subsctibe Now
+        </div>
+
       )}
     </main>
   );
