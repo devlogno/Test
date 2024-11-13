@@ -39,7 +39,12 @@ export default function Home() {
   useEffect(() => {
     // Save valid user IDs to local storage whenever they change
     localStorage.setItem('validUserIds', JSON.stringify(validUserIds));
-  }, [validUserIds]);
+
+    // Check if the user data exists and the new ID list grants access
+    if (userData && validUserIds.includes(userData.id)) {
+      setUserData({ ...userData }); // Trigger a re-render
+    }
+  }, [validUserIds, userData]);
 
   // Function to extract the 'id' from the given URL
   const extractIdFromUrl = (url: string) => {
