@@ -1,9 +1,7 @@
-'use client'
+import WebApp from '@twa-dev/sdk';
+import { useEffect, useState } from 'react';
 
-import WebApp from '@twa-dev/sdk'
-import { useEffect, useState } from 'react'
-
-// Define the interface for user data
+// Define the interface for user data and valid user entries
 interface UserData {
   id: number;
   first_name: string;
@@ -15,24 +13,25 @@ interface UserData {
 
 interface ValidUser {
   id: number;
-  addedAt: number; // Timestamp for when the user was added
+  name: string;
 }
 
 export default function Home() {
-  const [userData, setUserData] = useState<UserData | null>(null)
-  const [isInputVisible, setIsInputVisible] = useState(true)
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [isInputVisible, setIsInputVisible] = useState(true);
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
 
   const adminId = 5459502292;
-  const [validUsers, setValidUsers] = useState<ValidUser[]>([]); // List of valid users with timestamps
+  const [validUsers, setValidUsers] = useState<ValidUser[]>([]);
+
   const [newUserId, setNewUserId] = useState<string>('');
+  const [newUserName, setNewUserName] = useState<string>('');
 
   useEffect(() => {
     if (WebApp.initDataUnsafe.user) {
-      setUserData(WebApp.initDataUnsafe.user as UserData)
+      setUserData(WebApp.initDataUnsafe.user as UserData);
     }
 
-    // Retrieve validUsers list from localStorage on initial load
     const storedUsers = localStorage.getItem('validUsers');
     if (storedUsers) {
       setValidUsers(JSON.parse(storedUsers));
@@ -40,34 +39,19 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    // Store the updated validUsers list in localStorage whenever it changes
     localStorage.setItem('validUsers', JSON.stringify(validUsers));
-  }, [validUsers]);
 
-  // Check if the user's access has expired
-  const isAccessExpired = (addedAt: number) => {
-    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
-    return Date.now() - addedAt > threeDaysInMs;
-  };
+    if (userData && validUsers.some((user) => user.id === userData.id)) {
+      setUserData({ ...userData });
+    }
+  }, [validUsers, userData]);
 
-  // Determine if the current user has access
-  const hasAccess = () => {
-    return (
-      userData &&
-      validUsers.some(
-        (user) => user.id === userData.id && !isAccessExpired(user.addedAt)
-      )
-    );
-  };
-
-  // Extract the ID from the given URL
   const extractIdFromUrl = (url: string) => {
     const regex = /\/s\/1([^/]+)/;
     const match = url.match(regex);
     return match ? match[1] : null;
   };
 
-  // Handle input changes for URL embedding
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const url = event.target.value;
     const id = extractIdFromUrl(url);
@@ -80,7 +64,6 @@ export default function Home() {
     }
   };
 
-  // Reset input bar after a delay
   const resetFadeOut = () => {
     if (timer) {
       clearTimeout(timer);
@@ -88,7 +71,7 @@ export default function Home() {
     const newTimer = setTimeout(() => {
       setIsInputVisible(false);
       const inputElement = document.getElementById('urlInput') as HTMLInputElement;
-      inputElement.value = ''; // Clear the URL
+      inputElement.value = '';
       inputElement.blur();
     }, 2000);
 
@@ -100,20 +83,17 @@ export default function Home() {
     resetFadeOut();
   };
 
-  // Function to add a new user ID with a timestamp
-  const handleAddUserId = () => {
-    const newId = parseInt(newUserId);
-    if (!isNaN(newId) && !validUsers.some((user) => user.id === newId)) {
-      setValidUsers((prevUsers) => [
-        ...prevUsers,
-        { id: newId, addedAt: Date.now() },
-      ]);
-      setNewUserId(''); // Clear input field
+  const handleAddUser = () => {
+    const id = parseInt(newUserId);
+    if (!isNaN(id) && newUserName.trim() && !validUsers.some((user) => user.id === id)) {
+      const newUser: ValidUser = { id, name: newUserName };
+      setValidUsers((prevUsers) => [...prevUsers, newUser]);
+      setNewUserId('');
+      setNewUserName('');
     }
   };
 
-  // Function to remove a user ID
-  const handleRemoveUserId = (id: number) => {
+  const handleRemoveUser = (id: number) => {
     setValidUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
   };
 
@@ -152,8 +132,25 @@ export default function Home() {
                   width: "30%",
                 }}
               />
+              <input
+                type="text"
+                placeholder="Enter User Name"
+                value={newUserName}
+                onChange={(e) => setNewUserName(e.target.value)}
+                style={{
+                  padding: "10px",
+                  fontSize: "16px",
+                  border: "none",
+                  borderRadius: "5px",
+                  background: "rgba(255, 255, 255, 0.8)",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+                  outline: "none",
+                  width: "30%",
+                  marginLeft: "10px",
+                }}
+              />
               <button
-                onClick={handleAddUserId}
+                onClick={handleAddUser}
                 style={{
                   marginLeft: "10px",
                   padding: "10px 15px",
@@ -164,17 +161,17 @@ export default function Home() {
                   borderRadius: "5px",
                 }}
               >
-                Add ID
+                Add User
               </button>
             </div>
             <div style={{ textAlign: 'center' }}>
-              <h3 style={{ color: 'white' }}>Valid User IDs</h3>
+              <h3 style={{ color: 'white' }}>Valid Users</h3>
               <ul>
-                {validUsers.map((user) => (
-                  <li key={user.id} style={{ color: 'white' }}>
-                    {user.id} - {isAccessExpired(user.addedAt) ? 'Expired' : 'Active'}{' '}
+                {validUsers.map(({ id, name }) => (
+                  <li key={id} style={{ color: 'white' }}>
+                    {name} (ID: {id})
                     <button
-                      onClick={() => handleRemoveUserId(user.id)}
+                      onClick={() => handleRemoveUser(id)}
                       style={{
                         marginLeft: "10px",
                         padding: "5px",
@@ -193,7 +190,7 @@ export default function Home() {
             </div>
           </div>
         </>
-      ) : hasAccess() ? (
+      ) : userData && validUsers.some((user) => user.id === userData.id) ? (
         <>
           <div
             style={{
