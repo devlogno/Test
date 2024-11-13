@@ -13,15 +13,18 @@ interface UserData {
   is_premium?: boolean;
 }
 
+interface ValidUser {
+  id: number;
+  addedAt: number; // Timestamp for when the user was added
+}
+
 export default function Home() {
   const [userData, setUserData] = useState<UserData | null>(null)
   const [isInputVisible, setIsInputVisible] = useState(true)
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
 
-  // Admin ID and initial valid user IDs
   const adminId = 5459502292;
-  const [validUserIds, setValidUserIds] = useState<number[]>([]);
-
+  const [validUsers, setValidUsers] = useState<ValidUser[]>([]); // List of valid users with timestamps
   const [newUserId, setNewUserId] = useState<string>('');
 
   useEffect(() => {
@@ -29,31 +32,31 @@ export default function Home() {
       setUserData(WebApp.initDataUnsafe.user as UserData)
     }
 
-    // Load valid user IDs from local storage on component mount
-    const storedIds = localStorage.getItem('validUserIds');
-    if (storedIds) {
-      setValidUserIds(JSON.parse(storedIds));
+    const storedUsers = localStorage.getItem('validUsers');
+    if (storedUsers) {
+      setValidUsers(JSON.parse(storedUsers));
     }
   }, []);
 
   useEffect(() => {
-    // Save valid user IDs to local storage whenever they change
-    localStorage.setItem('validUserIds', JSON.stringify(validUserIds));
+    localStorage.setItem('validUsers', JSON.stringify(validUsers));
+  }, [validUsers]);
 
-    // Check if the user data exists and the new ID list grants access
-    if (userData && validUserIds.includes(userData.id)) {
-      setUserData({ ...userData }); // Trigger a re-render
-    }
-  }, [validUserIds, userData]);
-
-  // Function to extract the 'id' from the given URL
-  const extractIdFromUrl = (url: string) => {
-    const regex = /\/s\/1([^/]+)/;
-    const match = url.match(regex);
-    return match ? match[1] : null;
+  const isAccessExpired = (addedAt: number) => {
+    const currentTime = Date.now();
+    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000;
+    return currentTime - addedAt > threeDaysInMs;
   };
 
-  // Event handler for input change
+  const hasAccess = () => {
+    return (
+      userData &&
+      validUsers.some(
+        (user) => user.id === userData.id && !isAccessExpired(user.addedAt)
+      )
+    );
+  };
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const url = event.target.value;
     const id = extractIdFromUrl(url);
@@ -63,7 +66,6 @@ export default function Home() {
       const embedUrl = `https://www.terabox.com/sharing/embed?surl=${id}`;
       iframe.src = embedUrl;
 
-      // Hide the input bar after 2 seconds and clear URL
       resetFadeOut();
     }
   };
@@ -75,7 +77,7 @@ export default function Home() {
     const newTimer = setTimeout(() => {
       setIsInputVisible(false);
       const inputElement = document.getElementById('urlInput') as HTMLInputElement;
-      inputElement.value = ''; // Clear the URL
+      inputElement.value = '';
       inputElement.blur();
     }, 2000);
 
@@ -87,18 +89,19 @@ export default function Home() {
     resetFadeOut();
   };
 
-  // Function to add a new user ID
   const handleAddUserId = () => {
     const newId = parseInt(newUserId);
-    if (!isNaN(newId) && !validUserIds.includes(newId)) {
-      setValidUserIds((prevIds) => [...prevIds, newId]);
-      setNewUserId(''); // Clear input field
+    if (!isNaN(newId) && !validUsers.some((user) => user.id === newId)) {
+      setValidUsers((prevUsers) => [
+        ...prevUsers,
+        { id: newId, addedAt: Date.now() },
+      ]);
+      setNewUserId('');
     }
   };
 
-  // Function to remove a user ID
   const handleRemoveUserId = (id: number) => {
-    setValidUserIds((prevIds) => prevIds.filter((userId) => userId !== id));
+    setValidUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
   };
 
   return (
@@ -154,11 +157,11 @@ export default function Home() {
             <div style={{ textAlign: 'center' }}>
               <h3 style={{ color: 'white' }}>Valid User IDs</h3>
               <ul>
-                {validUserIds.map((id) => (
-                  <li key={id} style={{ color: 'white' }}>
-                    {id}{' '}
+                {validUsers.map((user) => (
+                  <li key={user.id} style={{ color: 'white' }}>
+                    {user.id} - {isAccessExpired(user.addedAt) ? 'Expired' : 'Active'}{' '}
                     <button
-                      onClick={() => handleRemoveUserId(id)}
+                      onClick={() => handleRemoveUserId(user.id)}
                       style={{
                         marginLeft: "10px",
                         padding: "5px",
@@ -177,7 +180,7 @@ export default function Home() {
             </div>
           </div>
         </>
-      ) : userData && validUserIds.includes(userData.id) ? (
+      ) : hasAccess() ? (
         <>
           <div
             style={{
@@ -235,12 +238,17 @@ export default function Home() {
       ) : (
         <div
           style={{ color: 'red', cursor: 'pointer' }}
-          onClick={() => window.open('https://yourlink.com',)}
+          onClick={() => window.open('https://youtube.com')}
         >
-          This Bot is paid. Subsctibe Now
+          This Bot is paid. Subscribe Now
         </div>
-
       )}
     </main>
   );
 }
+
+const extractIdFromUrl = (url: string) => {
+  const regex = /\/s\/1([^/]+)/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+};
