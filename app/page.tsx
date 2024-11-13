@@ -1,7 +1,9 @@
-import WebApp from '@twa-dev/sdk';
-import { useEffect, useState } from 'react';
+'use client'
 
-// Define the interface for user data and valid user entries
+import WebApp from '@twa-dev/sdk'
+import { useEffect, useState } from 'react'
+
+// Define the interface for user data
 interface UserData {
   id: number;
   first_name: string;
@@ -17,19 +19,18 @@ interface ValidUser {
 }
 
 export default function Home() {
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [isInputVisible, setIsInputVisible] = useState(true);
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null)
+  const [isInputVisible, setIsInputVisible] = useState(true)
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
 
   const adminId = 5459502292;
   const [validUsers, setValidUsers] = useState<ValidUser[]>([]);
-
   const [newUserId, setNewUserId] = useState<string>('');
   const [newUserName, setNewUserName] = useState<string>('');
 
   useEffect(() => {
     if (WebApp.initDataUnsafe.user) {
-      setUserData(WebApp.initDataUnsafe.user as UserData);
+      setUserData(WebApp.initDataUnsafe.user as UserData)
     }
 
     const storedUsers = localStorage.getItem('validUsers');
@@ -41,7 +42,7 @@ export default function Home() {
   useEffect(() => {
     localStorage.setItem('validUsers', JSON.stringify(validUsers));
 
-    if (userData && validUsers.some((user) => user.id === userData.id)) {
+    if (userData && validUsers.some(user => user.id === userData.id)) {
       setUserData({ ...userData });
     }
   }, [validUsers, userData]);
@@ -84,10 +85,9 @@ export default function Home() {
   };
 
   const handleAddUser = () => {
-    const id = parseInt(newUserId);
-    if (!isNaN(id) && newUserName.trim() && !validUsers.some((user) => user.id === id)) {
-      const newUser: ValidUser = { id, name: newUserName };
-      setValidUsers((prevUsers) => [...prevUsers, newUser]);
+    const newId = parseInt(newUserId);
+    if (!isNaN(newId) && newUserName.trim() && !validUsers.some(user => user.id === newId)) {
+      setValidUsers((prevUsers) => [...prevUsers, { id: newId, name: newUserName.trim() }]);
       setNewUserId('');
       setNewUserName('');
     }
@@ -129,7 +129,8 @@ export default function Home() {
                   background: "rgba(255, 255, 255, 0.8)",
                   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                   outline: "none",
-                  width: "30%",
+                  width: "20%",
+                  marginRight: "10px"
                 }}
               />
               <input
@@ -145,8 +146,7 @@ export default function Home() {
                   background: "rgba(255, 255, 255, 0.8)",
                   boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                   outline: "none",
-                  width: "30%",
-                  marginLeft: "10px",
+                  width: "20%"
                 }}
               />
               <button
@@ -164,14 +164,20 @@ export default function Home() {
                 Add User
               </button>
             </div>
-            <div style={{ textAlign: 'center' }}>
+            <div
+              style={{
+                maxHeight: '300px',
+                overflowY: 'auto',
+                textAlign: 'center',
+              }}
+            >
               <h3 style={{ color: 'white' }}>Valid Users</h3>
-              <ul>
-                {validUsers.map(({ id, name }) => (
-                  <li key={id} style={{ color: 'white' }}>
-                    {name} (ID: {id})
+              <ul style={{ padding: 0, listStyle: 'none' }}>
+                {validUsers.map((user) => (
+                  <li key={user.id} style={{ color: 'white', marginBottom: '10px' }}>
+                    {user.name} (ID: {user.id})
                     <button
-                      onClick={() => handleRemoveUser(id)}
+                      onClick={() => handleRemoveUser(user.id)}
                       style={{
                         marginLeft: "10px",
                         padding: "5px",
@@ -190,7 +196,7 @@ export default function Home() {
             </div>
           </div>
         </>
-      ) : userData && validUsers.some((user) => user.id === userData.id) ? (
+      ) : userData && validUsers.some(user => user.id === userData.id) ? (
         <>
           <div
             style={{
@@ -248,7 +254,7 @@ export default function Home() {
       ) : (
         <div
           style={{ color: 'red', cursor: 'pointer' }}
-          onClick={() => window.open('https://yourlink.com')}
+          onClick={() => window.open('https://yourlink.com',)}
         >
           This Bot is paid. Subscribe Now
         </div>
