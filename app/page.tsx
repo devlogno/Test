@@ -7,6 +7,10 @@ import { useEffect, useState } from 'react'
 interface UserData {
   id: number;
   first_name: string;
+  last_name?: string;
+  username?: string;
+  language_code: string;
+  is_premium?: boolean;
 }
 
 export default function Home() {
@@ -35,12 +39,7 @@ export default function Home() {
   useEffect(() => {
     // Save valid user IDs to local storage whenever they change
     localStorage.setItem('validUserIds', JSON.stringify(validUserIds));
-
-    // Check if the user data exists and the new ID list grants access
-    if (userData && validUserIds.includes(userData.id)) {
-      setUserData({ ...userData }); // Trigger a re-render
-    }
-  }, [validUserIds, userData]);
+  }, [validUserIds]);
 
   // Function to extract the 'id' from the given URL
   const extractIdFromUrl = (url: string) => {
@@ -56,7 +55,7 @@ export default function Home() {
 
     if (id) {
       const iframe = document.getElementById('myIframe') as HTMLIFrameElement;
-      const embedUrl = https://www.terabox.com/sharing/embed?surl=${id};
+      const embedUrl = `https://www.terabox.com/sharing/embed?surl=${id}`;
       iframe.src = embedUrl;
 
       // Hide the input bar after 2 seconds and clear URL
