@@ -82,7 +82,7 @@ export default function Home() {
       <div
         style={{
           position: "absolute",
-          top: "10px",
+          top: "9px",
           width: "100%",
           display: "flex",
           justifyContent: "center",
@@ -94,12 +94,12 @@ export default function Home() {
         <input
           id="urlInput"
           type="text"
-          placeholder="Paste URL here"
+          placeholder="Paste URL"
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           style={{
             width: "30%",
-            padding: "10px",
+            padding: "8px",
             fontSize: "16px",
             border: "none",
             borderRadius: "5px",
