@@ -99,7 +99,7 @@ export default function Home() {
           onFocus={handleInputFocus}
           style={{
             width: "30%",
-            padding: "10px",
+            padding: "9px",
             fontSize: "16px",
             border: "none",
             borderRadius: "5px",
