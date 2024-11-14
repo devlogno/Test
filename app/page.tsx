@@ -94,7 +94,7 @@ export default function Home() {
         <input
           id="urlInput"
           type="text"
-          placeholder=" Paste URL"
+          placeholder="  Paste URL"
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           style={{
