@@ -17,6 +17,7 @@ export default function Home() {
   const [userData, setUserData] = useState<UserData | null>(null)
   const [isInputVisible, setIsInputVisible] = useState(true)
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (WebApp.initDataUnsafe.user) {
@@ -40,9 +41,12 @@ export default function Home() {
       const iframe = document.getElementById('myIframe') as HTMLIFrameElement;
       const embedUrl = `https://www.terabox.com/sharing/embed?surl=${id}`;
       iframe.src = embedUrl;
+      setErrorMessage(null); // Clear error message if the URL is valid
 
       // Hide the input bar after 2 seconds and clear URL
       resetFadeOut();
+    } else {
+      setErrorMessage('Invalid link. Please enter a valid Terabox URL.'); // Set error message if the URL is invalid
     }
   };
 
@@ -109,6 +113,22 @@ export default function Home() {
           }}
         />
       </div>
+
+      {errorMessage && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50px",
+            color: "red",
+            fontSize: "14px",
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          {errorMessage}
+        </div>
+      )}
+
       <div
         style={{
           width: "100vw",
