@@ -55,7 +55,7 @@ export default function Home() {
       const inputElement = document.getElementById('urlInput') as HTMLInputElement;
       inputElement.value = ''; // Clear the URL
       inputElement.blur();
-    }, 4000);
+    }, 5000);
 
     setTimer(newTimer);
   };
@@ -94,12 +94,12 @@ export default function Home() {
         <input
           id="urlInput"
           type="text"
-          placeholder="Paste URL"
+          placeholder="   Paste URL"
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           style={{
             width: "30%",
-            padding: "9px",
+            padding: "8px",
             fontSize: "16px",
             border: "none",
             borderRadius: "5px",
