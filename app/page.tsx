@@ -18,11 +18,19 @@ export default function Home() {
   const [isInputVisible, setIsInputVisible] = useState(true)
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showChannelMessage, setShowChannelMessage] = useState(true); // State for showing the main channel message
 
   useEffect(() => {
     if (WebApp.initDataUnsafe.user) {
       setUserData(WebApp.initDataUnsafe.user as UserData)
     }
+
+    // Set a timer to hide the main channel message after 6 seconds
+    const channelMessageTimer = setTimeout(() => {
+      setShowChannelMessage(false);
+    }, 6000);
+
+    return () => clearTimeout(channelMessageTimer); // Cleanup timer on unmount
   }, []);
 
   // Function to extract the 'id' from the given URL
@@ -83,6 +91,25 @@ export default function Home() {
         padding: 0,
       }}
     >
+      {/* Message to join the main channel */}
+      {showChannelMessage && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            color: "blue",
+            fontSize: "20px",
+            fontWeight: "bold",
+            textAlign: "center",
+            zIndex: 20,
+          }}
+        >
+          Join the main channel: <a href="https://t.me/yourChannel" style={{ color: "blue", textDecoration: "underline" }}>https://t.me/yourChannel</a>
+        </div>
+      )}
+
       <div
         style={{
           position: "absolute",
