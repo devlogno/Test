@@ -106,7 +106,7 @@ export default function Home() {
             zIndex: 20,
           }}
         >
-          Join the main channel: <a href="https://t.me/CocoBotz" style={{ color: "lightblue" }}>@CocoBotz</a>
+          Join Now!<a href="https://t.me/CocoBotz" style={{ color: "lightblue" }}>@CocoBotz</a>
         </div>
       )}
 
