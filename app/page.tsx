@@ -106,7 +106,7 @@ export default function Home() {
             zIndex: 20,
           }}
         >
-          Join Now!<a href="https://t.me/CocoBotz" style={{ color: "lightblue" }}>@CocoBotz</a>
+          Join<br /> <a href="https://t.me/CocoBotz" style={{ color: "lightblue" }}>@CocoBotz</a>
         </div>
       )}
 
@@ -125,7 +125,7 @@ export default function Home() {
         <input
           id="urlInput"
           type="text"
-          placeholder="  Paste URL"
+          placeholder="Paste URL"
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           style={{
