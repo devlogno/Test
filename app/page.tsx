@@ -17,12 +17,17 @@ export default function Home() {
   const [userData, setUserData] = useState<UserData | null>(null)
   const [isInputVisible, setIsInputVisible] = useState(true)
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [showChannelMessage, setShowChannelMessage] = useState(true); // State for showing the main channel message
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [showChannelMessage, setShowChannelMessage] = useState(true) // State for showing the main channel message
+  const [isOutsideTelegram, setIsOutsideTelegram] = useState(false) // State to detect if outside Telegram
 
   useEffect(() => {
+    // Check if the app is opened inside Telegram
+    const isTelegram = navigator.userAgent.includes('Telegram');
+    setIsOutsideTelegram(!isTelegram);
+
     if (WebApp.initDataUnsafe.user) {
-      setUserData(WebApp.initDataUnsafe.user as UserData)
+      setUserData(WebApp.initDataUnsafe.user as UserData);
     }
 
     // Set a timer to hide the main channel message after 6 seconds
@@ -33,14 +38,12 @@ export default function Home() {
     return () => clearTimeout(channelMessageTimer); // Cleanup timer on unmount
   }, []);
 
-  // Function to extract the 'id' from the given URL
   const extractIdFromUrl = (url: string) => {
     const regex = /\/s\/1([^/]+)/;
     const match = url.match(regex);
     return match ? match[1] : null;
   };
 
-  // Event handler for input change
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const url = event.target.value;
     const id = extractIdFromUrl(url);
@@ -51,7 +54,6 @@ export default function Home() {
       iframe.src = embedUrl;
       setErrorMessage(null); // Clear error message if the URL is valid
 
-      // Hide the input bar after 2 seconds and clear URL
       resetFadeOut();
     } else {
       setErrorMessage('Invalid link. Please enter a valid Terabox URL.'); // Set error message if the URL is invalid
@@ -77,6 +79,34 @@ export default function Home() {
     resetFadeOut();
   };
 
+  if (isOutsideTelegram) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'black',
+          color: 'white',
+          fontSize: '20px',
+          textAlign: 'center',
+        }}
+      >
+        <div>
+          This app works best in Telegram. Please open it using the Telegram app.<br />
+          <a
+            href="https://t.me/CocoBotz"
+            style={{ color: 'lightblue', textDecoration: 'underline' }}
+          >
+            Open in Telegram
+          </a>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <main
       style={{
@@ -91,7 +121,6 @@ export default function Home() {
         padding: 0,
       }}
     >
-      {/* Message to join the main channel */}
       {showChannelMessage && (
         <div
           style={{
