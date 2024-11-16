@@ -128,7 +128,7 @@ export default function Home() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            color: "blue",
+            color: "white",
             fontSize: "20px",
             fontWeight: "bold",
             textAlign: "center",
