@@ -20,6 +20,7 @@ export default function Home() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showChannelMessage, setShowChannelMessage] = useState(true); // State for showing the main channel message
   const [isAllowed, setIsAllowed] = useState(false); // To determine if the app runs in Telegram
+  const [isLoading, setIsLoading] = useState(true); // Loading state to avoid flickering
 
   useEffect(() => {
     // Check if the app is running inside Telegram
@@ -29,6 +30,8 @@ export default function Home() {
     } else {
       setIsAllowed(false); // Not in Telegram
     }
+
+    setIsLoading(false); // Set loading to false after the check
 
     const channelMessageTimer = setTimeout(() => {
       setShowChannelMessage(false);
@@ -77,6 +80,27 @@ export default function Home() {
     setIsInputVisible(true);
     resetFadeOut();
   };
+
+  if (isLoading) {
+    // Render nothing (or a loading spinner) while determining the environment
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'black',
+          color: 'white',
+          fontSize: '20px',
+          textAlign: 'center',
+        }}
+      >
+        Loading...
+      </div>
+    );
+  }
 
   // If not running inside Telegram
   if (!isAllowed) {
