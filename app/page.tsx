@@ -14,28 +14,27 @@ interface UserData {
 }
 
 export default function Home() {
-  const [userData, setUserData] = useState<UserData | null>(null)
-  const [isInputVisible, setIsInputVisible] = useState(true)
-  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null)
-  const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const [showChannelMessage, setShowChannelMessage] = useState(true) // State for showing the main channel message
-  const [isOutsideTelegram, setIsOutsideTelegram] = useState(false) // State to detect if outside Telegram
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [isInputVisible, setIsInputVisible] = useState(true);
+  const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showChannelMessage, setShowChannelMessage] = useState(true); // State for showing the main channel message
+  const [isAllowed, setIsAllowed] = useState(false); // To determine if the app runs in Telegram
 
   useEffect(() => {
-    // Check if the app is opened inside Telegram
-    const isTelegram = navigator.userAgent.includes('Telegram');
-    setIsOutsideTelegram(!isTelegram);
-
-    if (WebApp.initDataUnsafe.user) {
+    // Check if the app is running inside Telegram
+    if (WebApp.initData) {
+      setIsAllowed(true);
       setUserData(WebApp.initDataUnsafe.user as UserData);
+    } else {
+      setIsAllowed(false); // Not in Telegram
     }
 
-    // Set a timer to hide the main channel message after 6 seconds
     const channelMessageTimer = setTimeout(() => {
       setShowChannelMessage(false);
     }, 6000);
 
-    return () => clearTimeout(channelMessageTimer); // Cleanup timer on unmount
+    return () => clearTimeout(channelMessageTimer);
   }, []);
 
   const extractIdFromUrl = (url: string) => {
@@ -56,7 +55,7 @@ export default function Home() {
 
       resetFadeOut();
     } else {
-      setErrorMessage('Invalid link. Please enter a valid Terabox URL.'); // Set error message if the URL is invalid
+      setErrorMessage('Invalid link. Please enter a valid Terabox URL.');
     }
   };
 
@@ -79,7 +78,8 @@ export default function Home() {
     resetFadeOut();
   };
 
-  if (isOutsideTelegram) {
+  // If not running inside Telegram
+  if (!isAllowed) {
     return (
       <div
         style={{
@@ -95,7 +95,7 @@ export default function Home() {
         }}
       >
         <div>
-          This app works best in Telegram. Please open it using the Telegram app.<br />
+          This app works only inside Telegram. Please open it in the Telegram app.<br />
           <a
             href="https://t.me/CocoBotz"
             style={{ color: 'lightblue', textDecoration: 'underline' }}
@@ -128,7 +128,7 @@ export default function Home() {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            color: "white",
+            color: "blue",
             fontSize: "20px",
             fontWeight: "bold",
             textAlign: "center",
