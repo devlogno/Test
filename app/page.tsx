@@ -167,7 +167,7 @@ export default function Home() {
         style={{
           position: "absolute",
           top: "9px",
-          width: "85%",
+          width: "80%",
           display: "flex",
           justifyContent: "center",
           zIndex: 10,
