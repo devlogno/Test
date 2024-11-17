@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
-import WebApp from '@twa-dev/sdk'
-import { useEffect, useState } from 'react'
+import WebApp from '@twa-dev/sdk';
+import { useEffect, useState } from 'react';
 
 // Define the interface for user data
 interface UserData {
@@ -134,13 +134,13 @@ export default function Home() {
   return (
     <main
       style={{
-        width: "100vw",
-        height: "100vh",
-        overflow: "hidden",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "black",
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'black',
         margin: 0,
         padding: 0,
       }}
@@ -148,30 +148,31 @@ export default function Home() {
       {showChannelMessage && (
         <div
           style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            color: "white",
-            fontSize: "20px",
-            fontWeight: "bold",
-            textAlign: "center",
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: 'white',
+            fontSize: '20px',
+            fontWeight: 'bold',
+            textAlign: 'center',
             zIndex: 20,
           }}
         >
-          Join<br /> <a href="https://t.me/CocoBotz" style={{ color: "lightblue" }}>@CocoBotz</a>
+          Join<br /> <a href="https://t.me/CocoBotz" style={{ color: 'lightblue' }}>@CocoBotz</a>
         </div>
       )}
 
+      {/* Input bar */}
       <div
         style={{
-          position: "absolute",
-          top: "9px",
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
+          position: 'absolute',
+          top: '9px',
+          width: isInputVisible ? '30%' : '0', // Match input width
+          display: 'flex',
+          justifyContent: 'center',
           zIndex: 10,
-          transition: "opacity 0.5s ease",
+          transition: 'opacity 0.5s ease',
           opacity: isInputVisible ? 1 : 0,
         }}
       >
@@ -182,41 +183,74 @@ export default function Home() {
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           style={{
-            width: "30%",
-            padding: "8px",
-            fontSize: "16px",
-            border: "none",
-            borderRadius: "5px",
-            background: "rgba(255, 255, 255, 0.8)",
-            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-            outline: "none",
+            width: '100%',
+            padding: '8px',
+            fontSize: '16px',
+            border: 'none',
+            borderRadius: '5px',
+            background: 'rgba(255, 255, 255, 0.8)',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+            outline: 'none',
           }}
         />
       </div>
 
-      {errorMessage && (
-        <div
+      {/* Buttons */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '9px',
+          left: '10px',
+          zIndex: 11,
+        }}
+      >
+        <button
           style={{
-            position: "absolute",
-            top: "50px",
-            color: "red",
-            fontSize: "14px",
-            fontWeight: "bold",
-            textAlign: "center",
+            backgroundColor: 'blue',
+            color: 'white',
+            padding: '10px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
           }}
+          onClick={() => alert('Left button clicked!')}
         >
-          {errorMessage}
-        </div>
-      )}
+          Left Button
+        </button>
+      </div>
 
       <div
         style={{
-          width: "100vw",
-          height: "100vh",
-          overflow: "hidden",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          position: 'absolute',
+          top: '9px',
+          right: '10px',
+          zIndex: 11,
+        }}
+      >
+        <button
+          style={{
+            backgroundColor: 'blue',
+            color: 'white',
+            padding: '10px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+          }}
+          onClick={() => alert('Right button clicked!')}
+        >
+          Right Button
+        </button>
+      </div>
+
+      {/* Iframe */}
+      <div
+        style={{
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         <iframe
@@ -224,10 +258,10 @@ export default function Home() {
           frameBorder="0"
           allowFullScreen
           style={{
-            width: "100vw",
-            height: "100vh",
-            border: "none",
-            overflow: "hidden",
+            width: '100vw',
+            height: '100vh',
+            border: 'none',
+            overflow: 'hidden',
           }}
         ></iframe>
       </div>
