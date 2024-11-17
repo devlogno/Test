@@ -182,7 +182,7 @@ export default function Home() {
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           style={{
-            width: "30%",
+            width: "40%",
             padding: "8px",
             fontSize: "16px",
             border: "none",
