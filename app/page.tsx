@@ -2,6 +2,7 @@
 
 import WebApp from '@twa-dev/sdk';
 import { useEffect, useState } from 'react';
+import Head from 'next/head'; // Import Head for managing the <head> section
 
 // Define the interface for user data
 interface UserData {
@@ -18,35 +19,19 @@ export default function Home() {
   const [isInputVisible, setIsInputVisible] = useState(true);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [showChannelMessage, setShowChannelMessage] = useState(true);
+  const [showChannelMessage, setShowChannelMessage] = useState(true); // State for showing the main channel message
   const [isAllowed, setIsAllowed] = useState(false); // To determine if the app runs in Telegram
   const [isLoading, setIsLoading] = useState(true); // Loading state to avoid flickering
 
   useEffect(() => {
-    // Add Google Tag Manager dynamically
-    const script = document.createElement('script');
-    script.src = 'https://www.googletagmanager.com/gtag/js?id=G-FN46S3XWG5';
-    script.async = true;
-    document.head.appendChild(script);
-
-    script.onload = () => {
-      window.dataLayer = window.dataLayer || [];
-      function gtag(...args: any) {
-        window.dataLayer.push(args);
-      }
-      gtag('js', new Date());
-      gtag('config', 'G-FN46S3XWG5');
-    };
-
-    // Check if the app is running inside Telegram
     if (WebApp.initData) {
       setIsAllowed(true);
       setUserData(WebApp.initDataUnsafe.user as UserData);
     } else {
-      setIsAllowed(false); // Not in Telegram
+      setIsAllowed(false);
     }
 
-    setIsLoading(false); // Set loading to false after the check
+    setIsLoading(false);
 
     const channelMessageTimer = setTimeout(() => {
       setShowChannelMessage(false);
@@ -69,7 +54,7 @@ export default function Home() {
       const iframe = document.getElementById('myIframe') as HTMLIFrameElement;
       const embedUrl = `https://www.terabox.com/sharing/embed?surl=${id}`;
       iframe.src = embedUrl;
-      setErrorMessage(null); // Clear error message if the URL is valid
+      setErrorMessage(null);
 
       resetFadeOut();
     } else {
@@ -84,7 +69,7 @@ export default function Home() {
     const newTimer = setTimeout(() => {
       setIsInputVisible(false);
       const inputElement = document.getElementById('urlInput') as HTMLInputElement;
-      inputElement.value = ''; // Clear the URL
+      inputElement.value = '';
       inputElement.blur();
     }, 5000);
 
@@ -97,7 +82,6 @@ export default function Home() {
   };
 
   if (isLoading) {
-    // Render nothing (or a loading spinner) while determining the environment
     return (
       <div
         style={{
@@ -117,7 +101,6 @@ export default function Home() {
     );
   }
 
-  // If not running inside Telegram
   if (!isAllowed) {
     return (
       <div
@@ -147,105 +130,121 @@ export default function Home() {
   }
 
   return (
-    <main
-      style={{
-        width: '100vw',
-        height: '100vh',
-        overflow: 'hidden',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: 'black',
-        margin: 0,
-        padding: 0,
-      }}
-    >
-      {showChannelMessage && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            color: 'white',
-            fontSize: '20px',
-            fontWeight: 'bold',
-            textAlign: 'center',
-            zIndex: 20,
-          }}
-        >
-          Join<br /> <a href="https://t.me/CocoBotz" style={{ color: 'lightblue' }}>@CocoBotz</a>
-        </div>
-      )}
-
-      <div
-        style={{
-          position: 'absolute',
-          top: '9px',
-          width: '80%',
-          display: 'flex',
-          justifyContent: 'center',
-          zIndex: 10,
-          transition: 'opacity 0.5s ease',
-          opacity: isInputVisible ? 1 : 0,
-        }}
-      >
-        <input
-          id="urlInput"
-          type="text"
-          placeholder="Paste URL"
-          onChange={handleInputChange}
-          onFocus={handleInputFocus}
-          style={{
-            width: '35%',
-            padding: '8px',
-            fontSize: '16px',
-            border: 'none',
-            borderRadius: '5px',
-            background: 'rgba(255, 255, 255, 0.8)',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-            outline: 'none',
+    <>
+      <Head>
+        {/* Google Tag Manager Script */}
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-FN46S3XWG5"></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-FN46S3XWG5');
+            `,
           }}
         />
-      </div>
-
-      {errorMessage && (
-        <div
-          style={{
-            position: 'absolute',
-            top: '50px',
-            color: 'red',
-            fontSize: '14px',
-            fontWeight: 'bold',
-            textAlign: 'center',
-          }}
-        >
-          {errorMessage}
-        </div>
-      )}
-
-      <div
+      </Head>
+      <main
         style={{
-          width: '100vw',
-          height: '100vh',
-          overflow: 'hidden',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          width: "100vw",
+          height: "100vh",
+          overflow: "hidden",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "black",
+          margin: 0,
+          padding: 0,
         }}
       >
-        <iframe
-          id="myIframe"
-          frameBorder="0"
-          allowFullScreen
+        {showChannelMessage && (
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              color: "white",
+              fontSize: "20px",
+              fontWeight: "bold",
+              textAlign: "center",
+              zIndex: 20,
+            }}
+          >
+            Join<br /> <a href="https://t.me/CocoBotz" style={{ color: "lightblue" }}>@CocoBotz</a>
+          </div>
+        )}
+
+        <div
           style={{
-            width: '100vw',
-            height: '100vh',
-            border: 'none',
-            overflow: 'hidden',
+            position: "absolute",
+            top: "9px",
+            width: "80%",
+            display: "flex",
+            justifyContent: "center",
+            zIndex: 10,
+            transition: "opacity 0.5s ease",
+            opacity: isInputVisible ? 1 : 0,
           }}
-        ></iframe>
-      </div>
-    </main>
+        >
+          <input
+            id="urlInput"
+            type="text"
+            placeholder="Paste URL"
+            onChange={handleInputChange}
+            onFocus={handleInputFocus}
+            style={{
+              width: "35%",
+              padding: "8px",
+              fontSize: "16px",
+              border: "none",
+              borderRadius: "5px",
+              background: "rgba(255, 255, 255, 0.8)",
+              boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+              outline: "none",
+            }}
+          />
+        </div>
+
+        {errorMessage && (
+          <div
+            style={{
+              position: "absolute",
+              top: "50px",
+              color: "red",
+              fontSize: "14px",
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            {errorMessage}
+          </div>
+        )}
+
+        <div
+          style={{
+            width: "100vw",
+            height: "100vh",
+            overflow: "hidden",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <iframe
+            id="myIframe"
+            frameBorder="0"
+            allowFullScreen
+            style={{
+              width: "100vw",
+              height: "100vh",
+              border: "none",
+              overflow: "hidden",
+            }}
+          ></iframe>
+        </div>
+      </main>
+    </>
   );
 }
