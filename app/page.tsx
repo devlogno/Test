@@ -32,12 +32,6 @@ export default function Home() {
     }
 
     setIsLoading(false); // Set loading to false after the check
-
-    const channelMessageTimer = setTimeout(() => {
-      setShowChannelMessage(false);
-    }, 6000);
-
-    return () => clearTimeout(channelMessageTimer);
   }, []);
 
   const extractIdFromUrl = (url: string) => {
@@ -56,6 +50,7 @@ export default function Home() {
       iframe.src = embedUrl;
       setErrorMessage(null); // Clear error message if the URL is valid
 
+      setShowChannelMessage(false); // Hide the channel message immediately
       resetFadeOut();
     } else {
       setErrorMessage('Invalid link. Please enter a valid Terabox URL.');
@@ -82,7 +77,6 @@ export default function Home() {
   };
 
   if (isLoading) {
-    // Render a loading spinner or a placeholder while determining the environment
     return (
       <div
         style={{
@@ -102,7 +96,6 @@ export default function Home() {
     );
   }
 
-  // If not running inside Telegram
   if (!isAllowed) {
     return (
       <div
