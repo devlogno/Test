@@ -50,8 +50,11 @@ export default function Home() {
       iframe.src = embedUrl;
       setErrorMessage(null); // Clear error message if the URL is valid
 
-      setShowChannelMessage(false); // Hide the channel message immediately
-      resetFadeOut();
+      // Delay hiding the channel message by 3 seconds
+      setTimeout(() => {
+        setShowChannelMessage(false); // Hide the channel message after 3 seconds
+      }, 3000);
+      
     } else {
       setErrorMessage('Invalid link. Please enter a valid Terabox URL.');
     }
